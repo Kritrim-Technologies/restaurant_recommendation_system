@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="latin-1">
+  <title>Recommender system</title>
+  <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Arimo' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Hind:300' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css"
+    integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+  <div class="login">
+    <div class="container">
+      <div class=header>Restaurant Recommendation</div>
+      <!-- Main Input For Receiving Query to ML -->
+      <form autocomplete="off" action="{{ url_for('recommend')}}" method="post">
+        <div class="autocomplete">
+          <input id="user" , type="text" name="user" placeholder="who are you ?" required="required" />
+        </div>
+
+        <div class="autocomplete">
+          <input id="tag" , type="text" name="tag" placeholder="tag"/>
+        </div>
+
+        <div class="autocomplete">
+          <input id="restaurant" , type="text" name="restaurant" placeholder="restaurant" required="required" />
+        </div>
+        <input id="rating" , type="text" name="rating" placeholder="rating" required="required" />
+        <button type="submit" class="submit_btn">Submit</button>
+
+      </form>
+      {% if user %}
+      <h3>Saved ratings for {{ user }}</h3>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>restaurant</th>
+            <th>rating</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for res, rating in unique_user_ratings %}
+          <tr>
+            <td>{{ res }}</td>
+            <td>{{ rating }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+
+      <h3>Recommendations</h3>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>restaurant</th>
+            <th>tag</th>
+            <th>likeness</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for res, tag, likeness in recommend_tags %}
+          <tr>
+            <td>{{ res }}</td>
+            <td>{{ tag }}</td>
+            <td>{{ likeness }} %</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% endif %}
+
+    </div>
+  </div>
+
+  <script>
+    restaurants = {{ restaurants | safe | tojson }};
+    restaurant_tags = {{ restaurant_tags | safe }};
+    users = {{ users | safe | tojson }};
+    tag_list = {{ tag_list | safe | tojson }};
+
+  </script>
+
+  <script type="text/javascript" src="{{ url_for('static', filename='autosuggestion.js') }}"></script>
+</body>
+
+</html>
